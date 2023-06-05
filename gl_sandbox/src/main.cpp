@@ -1,3 +1,6 @@
+#include <iostream>
+
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 int main() {
@@ -17,6 +20,10 @@ int main() {
 	}
 
 	glfwMakeContextCurrent(window);
+
+	if (glewInit() != GLEW_OK) {
+		std::cout << "error initalizing glew" << std::endl;
+	}
 
 	while(!glfwWindowShouldClose(window))
 	{
