@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 int main() {
+
 	GLFWwindow* window;
 
 	if(!glfwInit())
@@ -25,17 +26,28 @@ int main() {
 		std::cout << "error initalizing glew" << std::endl;
 	}
 
+	std::cout << glGetString(GL_VERSION) << std::endl;
+
+	unsigned int vertex_buffer;
+	float buffer_data [6] = { 
+	   -0.5f, -0.5f,
+		0.5f, -0.5f,
+		0.0f,  0.5f
+	};
+
+	glGenBuffers(1, &vertex_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+	glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), buffer_data, GL_STATIC_DRAW);
+	
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE , 2 * sizeof(float), 0);
+
 	while(!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		//TO DO: remove boiler plate legacy openGL code
-		glBegin(GL_TRIANGLES);
-		glVertex2f(-0.5f, -0.5f);
-		glVertex2f(0.5f, -0.5f);
-		glVertex2f(0.0f, 0.5f);
-		glEnd();
-		
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
 		glfwSwapBuffers(window);
 
 		glfwPollEvents();
