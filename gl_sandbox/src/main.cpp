@@ -1,7 +1,34 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
+struct shader_program_source
+{
+	std::string vertex;
+	std::string fragment;
+};
+
+static std::string read_shader_from_file(const std::string& file)
+{
+	std::ifstream stream(file);
+	std::stringstream buffer;
+
+	buffer << stream.rdbuf();
+	stream.close();
+	
+	std::string source_code = buffer.str();
+	
+	return source_code;
+}
+
+static shader_program_source parse_shaders(const std::string& vertex, const std::string& fragment)
+{
+	
+	return { read_shader_from_file(vertex), read_shader_from_file(fragment) };
+}
 
 static unsigned int compile_shader(const std::string& source, unsigned int type)
 {
@@ -86,27 +113,9 @@ int main() {
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE , 2 * sizeof(float), 0);
 
-	std::string vertex_shader =
-		"#version 330 core \n"
-		"\n"
-		"layout(location = 0) in vec4 position; \n"
-		"\n"
-		"void main() \n"
-		"{\n"
-		"	gl_Position = position; \n"
-		"}\n";
 
-	std::string fragment_shader =
-		"#version 330 core \n"
-		"\n"
-		"layout(location = 0) out vec4 color; \n"
-		"\n"
-		"void main() \n"
-		"{\n"
-		"	color = vec4(0.7, 0.0, 0.7, 1.0); \n"
-		"}\n";
-
-	unsigned int shader = create_shader(vertex_shader, fragment_shader);
+	shader_program_source shader_source = parse_shaders("res/shaders/basic_vertex.glsl", "res/shaders/basic_fragment.glsl");
+	unsigned int shader = create_shader(shader_source.vertex, shader_source.fragment);
 	glUseProgram(shader);
 
 	while(!glfwWindowShouldClose(window))
@@ -119,6 +128,7 @@ int main() {
 
 		glfwPollEvents();
 	}
+	glDeleteProgram(shader);
 
 	return 0;
 }
