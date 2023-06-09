@@ -5,6 +5,26 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#define ASSERT(x) if ((!x)) __debugbreak();
+#define GLCall(x) gl_clear_error();\
+	x;\
+	ASSERT(gl_log_call(#x, __FILE__, __LINE__))
+	
+static void gl_clear_error()
+{
+	while (glGetError() != GL_NO_ERROR);
+}
+
+static bool  gl_log_call(const char* function, const char* file, int line)
+{
+	while(GLenum error = glGetError())
+	{
+		std::cout << "[OpenGL error]: ( " << error << " ): " << function << " " << file << ": " << line << std::endl;
+		return false;
+	}
+	return true;
+}
+
 struct shader_program_source
 {
 	std::string vertex;
