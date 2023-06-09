@@ -112,6 +112,7 @@ int main() {
 	}
 
 	glfwMakeContextCurrent(window);
+	glfwSwapInterval(1);
 
 	if (glewInit() != GLEW_OK) {
 		std::cout << "error initalizing glew" << std::endl;
@@ -149,10 +150,24 @@ int main() {
 	unsigned int shader = create_shader(shader_source.vertex, shader_source.fragment);
 	glUseProgram(shader);
 
+	GLCall(int location = glGetUniformLocation(shader, "u_Color"));
+	glUniform4f(location, 0.7f, 0.0f, 0.7f, 1.0f);
+
+	float r = 0.0f;
+	float increment = 0.05f;
+
 	while(!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 		
+		if (r > 1.0f)
+			increment = -0.05f;
+		else if (r < 0.0f)
+			increment = 0.05f;
+
+		r += increment;
+		glUniform4f(location, r, 0.0f, 0.7f, 1.0f);
+
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
 		glfwSwapBuffers(window);
