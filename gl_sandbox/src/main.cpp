@@ -103,6 +103,10 @@ int main() {
 		return -1;
 	}
 
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 	window = glfwCreateWindow(1280, 720, "gl_sandbox", NULL, NULL);
 
 	if(!window)
@@ -121,6 +125,14 @@ int main() {
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
 	unsigned int vertex_buffer;
+	
+	
+	unsigned int index_buffer;
+	unsigned int index_data[6] = {
+		0, 1, 2,
+		1, 2, 3
+	};
+
 	float buffer_data[8] = {
 	   -0.5f, -0.5f,
 		0.5f, -0.5f,
@@ -128,15 +140,14 @@ int main() {
 		0.5f,  0.5f
 	};
 
+	unsigned int vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+
 	glGenBuffers(1, &vertex_buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), buffer_data, GL_STATIC_DRAW);
-	
-	unsigned int index_buffer;
-	unsigned int index_data[6] = {
-		0, 1, 2,
-		1, 2, 3
-	};
+	glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), buffer_data, GL_STATIC_DRAW);
 
 	glGenBuffers(1, &index_buffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
