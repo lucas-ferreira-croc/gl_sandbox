@@ -5,25 +5,9 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#define ASSERT(x) if ((!x)) __debugbreak();
-#define GLCall(x) gl_clear_error();\
-	x;\
-	ASSERT(gl_log_call(#x, __FILE__, __LINE__))
-	
-static void gl_clear_error()
-{
-	while (glGetError() != GL_NO_ERROR);
-}
-
-static bool  gl_log_call(const char* function, const char* file, int line)
-{
-	while(GLenum error = glGetError())
-	{
-		std::cout << "[OpenGL error]: ( " << error << " ): " << function << " " << file << ": " << line << std::endl;
-		return false;
-	}
-	return true;
-}
+#include "renderer/renderer.h"
+#include "buffers/vertex_buffer.h"
+#include "buffers/index_buffer.h"
 
 struct shader_program_source
 {
@@ -124,16 +108,12 @@ int main() {
 
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
-	unsigned int vertex_buffer;
-	
-	
-	unsigned int index_buffer;
 	unsigned int index_data[6] = {
 		0, 1, 2,
 		1, 2, 3
 	};
 
-	float buffer_data[8] = {
+	float vertex_data[8] = {
 	   -0.5f, -0.5f,
 		0.5f, -0.5f,
 	   -0.5f,  0.5f,
@@ -144,14 +124,8 @@ int main() {
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
-
-	glGenBuffers(1, &vertex_buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-	glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), buffer_data, GL_STATIC_DRAW);
-
-	glGenBuffers(1, &index_buffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(float), index_data, GL_STATIC_DRAW);
+	vertex_buffer vb(vertex_data, 4 * 2 * sizeof(float));
+	index_buffer ibo(index_data, 6);
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE , 2 * sizeof(float), 0);
