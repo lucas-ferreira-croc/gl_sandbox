@@ -8,6 +8,8 @@
 #include "renderer/renderer.h"
 #include "buffers/vertex_buffer.h"
 #include "buffers/index_buffer.h"
+#include "vao/vertex_array.h"
+#include "vao/vertex_buffer_layout.h"
 
 struct shader_program_source
 {
@@ -120,16 +122,16 @@ int main() {
 		0.5f,  0.5f
 	};
 
-	unsigned int vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
+	vertex_array va;
 	vertex_buffer vb(vertex_data, 4 * 2 * sizeof(float));
+
+	vertex_buffer_layout layout;
+	layout.push<float>(2);
+	va.add_buffer(vb, layout);
+
 	index_buffer ibo(index_data, 6);
 
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE , 2 * sizeof(float), 0);
-
+	
 
 	shader_program_source shader_source = parse_shaders("res/shaders/basic_vertex.glsl", "res/shaders/basic_fragment.glsl");
 	unsigned int shader = create_shader(shader_source.vertex, shader_source.fragment);
@@ -161,5 +163,6 @@ int main() {
 	}
 	glDeleteProgram(shader);
 
+	glfwTerminate();
 	return 0;
 }
