@@ -71,20 +71,27 @@ int main() {
 	float r = 0.0f;
 	float increment = 0.05f;
 
+	va.unbind();
+	vb.unbind();
+	ibo.unbind();
+	shader_program.unbind();
+
+	renderer renderer_;
 	while(!glfwWindowShouldClose(window))
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
-		
+		renderer_.clear();
+
 		if (r > 1.0f)
 			increment = -0.05f;
 		else if (r < 0.0f)
 			increment = 0.05f;
 
 		r += increment;	
+		
+		shader_program.bind();
 		shader_program.set_uniform4f("u_Color", 0.7f, 0.0f, r, 1.0f);
 
-
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+		renderer_.draw(va, ibo, shader_program);
 
 		glfwSwapBuffers(window);
 

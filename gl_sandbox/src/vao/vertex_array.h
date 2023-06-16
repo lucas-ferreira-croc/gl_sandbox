@@ -12,7 +12,7 @@ public:
 	~vertex_array();
 
 	void add_buffer(const vertex_buffer& vb, const vertex_buffer_layout& layout);
-	void bind();
-	void unbind();
+	void bind() const;
+	void unbind() const;
 };
 

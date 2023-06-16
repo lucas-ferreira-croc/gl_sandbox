@@ -2,8 +2,6 @@
 #include <vector>
 #include <GL/glew.h>
 
-#include "../renderer/renderer.h"
-
 struct vertex_buffer_element
 {
 	unsigned int type;
@@ -18,7 +16,6 @@ struct vertex_buffer_element
 			case GL_UNSIGNED_INT:   return 4;
 			case GL_UNSIGNED_BYTE:  return 1;
 		}
-		ASSERT(false);
 		return 0;
 	}
 };

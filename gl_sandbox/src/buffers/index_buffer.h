@@ -12,6 +12,6 @@ public:
 	void bind() const ;
 	void unbind() const;
 
-	inline unsigned int get_count() { return m_count; }
+	inline unsigned int get_count() const { return m_count; }
 };
 

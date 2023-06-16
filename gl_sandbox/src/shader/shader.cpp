@@ -5,7 +5,6 @@
 #include <sstream>
 
 #include "GL/glew.h"
-
 struct shader_program_source
 {
 	std::string vertex;
@@ -43,12 +42,12 @@ shader::~shader()
 	glDeleteProgram(m_renderer_id);
 }
 
-void shader::bind()
+void shader::bind() const
 {
 	glUseProgram(m_renderer_id);
 }
 
-void shader::unbind()
+void shader::unbind() const 
 {
 	glUseProgram(0);
 }

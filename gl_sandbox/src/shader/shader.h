@@ -16,8 +16,8 @@ public:
 	shader(const std::string& vertex_file, const std::string& fragment_file);
 	~shader();
 
-	void bind();
-	void unbind();
+	void bind() const;
+	void unbind() const;
 
 	void set_uniform4f(const std::string name, float v0, float v1, float v2, float v3);
 		

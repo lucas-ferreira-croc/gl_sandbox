@@ -1,5 +1,6 @@
 #pragma once
 #include "renderer.h"
+#include "GL/glew.h"
 #include <iostream>
 
 void gl_clear_error()
@@ -15,4 +16,18 @@ bool  gl_log_call(const char* function, const char* file, int line)
 		return false;
 	}
 	return true;
+}
+
+void renderer::clear()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void renderer::draw(const vertex_array& vao, const index_buffer& ibo, const shader& shader_) const
+{
+	vao.bind();
+	shader_.bind();
+	ibo.bind();
+
+	glDrawElements(GL_TRIANGLES, ibo.get_count(), GL_UNSIGNED_INT, nullptr);
 }
