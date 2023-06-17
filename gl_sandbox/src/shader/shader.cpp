@@ -58,6 +58,12 @@ void shader::set_uniform4f(const std::string name, float v0, float v1, float v2,
 	glUniform4f(location, v0, v1, v2, v3);
 }
 
+void shader::set_uniform1i(const std::string name, int value)
+{
+	int location = get_uniform_location(name);
+	glUniform1i(location, value);
+}
+
 
 
 unsigned int shader::create_shader(const std::string& vertex_shader, const std::string& fragment_shader)

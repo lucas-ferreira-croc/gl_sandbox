@@ -12,6 +12,8 @@
 #include "vao/vertex_buffer_layout.h"
 
 #include "shader/shader.h"
+#include "texture/texture.h"
+
 
 int main() {
 
@@ -26,7 +28,7 @@ int main() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	window = glfwCreateWindow(1280, 720, "gl_sandbox", NULL, NULL);
+	window = glfwCreateWindow(1280, 1280, "gl_sandbox", NULL, NULL);
 
 	if(!window)
 	{
@@ -43,22 +45,25 @@ int main() {
 
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
+	glBlendFunc(GL_SRC0_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	unsigned int index_data[6] = {
 		0, 1, 2,
 		1, 2, 3
 	};
 
-	float vertex_data[8] = {
-	   -0.5f, -0.5f,
-		0.5f, -0.5f,
-	   -0.5f,  0.5f,
-		0.5f,  0.5f
+	float vertex_data[16] = {
+	   -0.5f, -0.5f, 0.0f, 0.0f,
+		0.5f, -0.5f, 1.0f, 0.0f,
+	   -0.5f,  0.5f, 0.0f, 1.0f,
+		0.5f,  0.5f, 1.0f, 1.0f
 	};
 
 	vertex_array va;
-	vertex_buffer vb(vertex_data, 4 * 2 * sizeof(float));
+	vertex_buffer vb(vertex_data, 4 * 4 * sizeof(float));
 
 	vertex_buffer_layout layout;
+	layout.push<float>(2);
 	layout.push<float>(2);
 	va.add_buffer(vb, layout);
 
@@ -67,6 +72,10 @@ int main() {
 	shader shader_program("res/shaders/basic_vertex.glsl", "res/shaders/basic_fragment.glsl");
 	shader_program.bind();
 	shader_program.set_uniform4f("u_Color", 0.7f, 0.0f, 0.7f, 1.0f);
+
+	texture texture_("res/textures/crocao.png");
+	texture_.bind();
+	shader_program.set_uniform1i("u_Texture", 0);
 
 	float r = 0.0f;
 	float increment = 0.05f;
