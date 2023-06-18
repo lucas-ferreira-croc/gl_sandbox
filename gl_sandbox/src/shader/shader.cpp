@@ -10,7 +10,7 @@ struct shader_program_source
 	std::string vertex;
 	std::string fragment;
 
-	shader_program_source(const std::string vertex_path, const std::string fragment_path)
+	shader_program_source(const std::string& vertex_path, const std::string& fragment_path)
 		:vertex(read_shader_from_file(vertex_path)), fragment(read_shader_from_file(fragment_path))
 	{
 		
@@ -52,13 +52,19 @@ void shader::unbind() const
 	glUseProgram(0);
 }
 
-void shader::set_uniform4f(const std::string name, float v0, float v1, float v2, float v3)
+void shader::set_uniform4f(const std::string& name, float v0, float v1, float v2, float v3)
 {
 	int location = get_uniform_location(name);
 	glUniform4f(location, v0, v1, v2, v3);
 }
 
-void shader::set_uniform1i(const std::string name, int value)
+void shader::set_uniform_mat4f(const std::string& name, glm::mat4 value)
+{
+	int location = get_uniform_location(name);
+	glUniformMatrix4fv(location, 1, GL_FALSE, &value[0][0]);
+}
+
+void shader::set_uniform1i(const std::string& name, int value)
 {
 	int location = get_uniform_location(name);
 	glUniform1i(location, value);
@@ -85,7 +91,7 @@ unsigned int shader::create_shader(const std::string& vertex_shader, const std::
 
 
 
-unsigned int shader::compile_shader(const std::string source, unsigned int type)
+unsigned int shader::compile_shader(const std::string& source, unsigned int type)
 {
 	unsigned int id = glCreateShader(type);
 	const char* src = source.c_str();
@@ -113,7 +119,7 @@ unsigned int shader::compile_shader(const std::string source, unsigned int type)
 }
 
 
-int shader::get_uniform_location(const std::string name)
+int shader::get_uniform_location(const std::string& name)
 {
 	if(m_uniform_location_cache.find(name) != m_uniform_location_cache.end())
 		return m_uniform_location_cache[name];

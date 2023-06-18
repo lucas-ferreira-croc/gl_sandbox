@@ -14,6 +14,8 @@
 #include "shader/shader.h"
 #include "texture/texture.h"
 
+#include "vendor/glm/glm.hpp"
+#include "vendor/glm/gtc/matrix_transform.hpp"
 
 int main() {
 
@@ -28,7 +30,7 @@ int main() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	window = glfwCreateWindow(1280, 1280, "gl_sandbox", NULL, NULL);
+	window = glfwCreateWindow(1280, 720, "gl_sandbox", NULL, NULL);
 
 	if(!window)
 	{
@@ -69,9 +71,12 @@ int main() {
 
 	index_buffer ibo(index_data, 6);
 
+	glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+
 	shader shader_program("res/shaders/basic_vertex.glsl", "res/shaders/basic_fragment.glsl");
 	shader_program.bind();
 	shader_program.set_uniform4f("u_Color", 0.7f, 0.0f, 0.7f, 1.0f);
+	shader_program.set_uniform_mat4f("u_MVP", proj);
 
 	texture texture_("res/textures/crocao.png");
 	texture_.bind();
