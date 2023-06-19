@@ -55,10 +55,10 @@ int main() {
 	};
 
 	float vertex_data[16] = {
-	   -0.5f, -0.5f, 0.0f, 0.0f,
-		0.5f, -0.5f, 1.0f, 0.0f,
-	   -0.5f,  0.5f, 0.0f, 1.0f,
-		0.5f,  0.5f, 1.0f, 1.0f
+	    100.0f,  100.0f, 0.0f, 0.0f,
+		200.0f,  100.0f, 1.0f, 0.0f,
+	    100.0f,  200.0f, 0.0f, 1.0f,
+		200.0f,  200.0f, 1.0f, 1.0f
 	};
 
 	vertex_array va;
@@ -71,7 +71,7 @@ int main() {
 
 	index_buffer ibo(index_data, 6);
 
-	glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+	glm::mat4 proj = glm::ortho(0.0f, 1280.0f, 0.0f, 720.0f, -1.0f, 1.0f);
 
 	shader shader_program("res/shaders/basic_vertex.glsl", "res/shaders/basic_fragment.glsl");
 	shader_program.bind();
