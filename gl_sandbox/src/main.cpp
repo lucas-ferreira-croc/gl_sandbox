@@ -72,11 +72,15 @@ int main() {
 	index_buffer ibo(index_data, 6);
 
 	glm::mat4 proj = glm::ortho(0.0f, 1280.0f, 0.0f, 720.0f, -1.0f, 1.0f);
+	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
+	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
 
 	shader shader_program("res/shaders/basic_vertex.glsl", "res/shaders/basic_fragment.glsl");
 	shader_program.bind();
 	shader_program.set_uniform4f("u_Color", 0.7f, 0.0f, 0.7f, 1.0f);
-	shader_program.set_uniform_mat4f("u_MVP", proj);
+	
+	glm::mat4 mvp = proj * view * model;
+	shader_program.set_uniform_mat4f("u_MVP", mvp);
 
 	texture texture_("res/textures/crocao.png");
 	texture_.bind();
