@@ -14,6 +14,7 @@
 #include "shader/shader.h"
 #include "texture/texture.h"
 
+#include "tests/test.h"
 #include "tests/test_clear_color.h"
 
 #include "glm/glm.hpp"
@@ -105,7 +106,12 @@ int main()
 
 	ImGui::StyleColorsDark();
 
-	test::test_clear_color test;
+
+	test::test* currentTest = nullptr;
+	test::test_menu* menu = new test::test_menu(currentTest);
+	currentTest = menu;
+
+	menu->register_test<test::test_clear_color>("Clear color");
 
 	while(!glfwWindowShouldClose(window))
 	{
@@ -146,22 +152,33 @@ int main()
 		//}
 
 		renderer_.clear();
-		
-		ImGui_ImplGlfwGL3_NewFrame();
-		
-		test.on_update(0.0f);
-		test.on_render();
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-		test.on_imgui_render();
-		
+		ImGui_ImplGlfwGL3_NewFrame();
+		if(currentTest)
+		{
+			currentTest->on_update(0.0f);
+			currentTest->on_render();
+			
+			ImGui::Begin("Test");
+			if(currentTest != menu && ImGui::Button("<-"))
+			{
+				delete currentTest;
+				currentTest = menu;
+			}
+			currentTest->on_imgui_render();
+			ImGui::End();
+		}
+
 		ImGui::Render();
 		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
-		
 		glfwSwapBuffers(window);
 
 		glfwPollEvents();
 	}
-
+	delete currentTest;
+	if (currentTest != menu)
+		delete menu;
 	ImGui_ImplGlfwGL3_Shutdown();
 	ImGui::DestroyContext();
 	glfwTerminate();
