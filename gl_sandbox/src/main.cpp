@@ -14,12 +14,15 @@
 #include "shader/shader.h"
 #include "texture/texture.h"
 
+#include "tests/test_clear_color.h"
+
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw_gl3.h"
 
-int main() {
+int main() 
+{
 
 	GLFWwindow* window;
 
@@ -51,16 +54,16 @@ int main() {
 
 	glBlendFunc(GL_SRC0_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	float vertex_data[16] = {
+	    -50.0f,  -50.0f, 0.0f, 0.0f,
+		 50.0f,  -50.0f, 1.0f, 0.0f,
+	    -50.0f,   50.0f, 0.0f, 1.0f,
+		 50.0f,   50.0f, 1.0f, 1.0f
+	};
+
 	unsigned int index_data[6] = {
 		0, 1, 2,
 		1, 2, 3
-	};
-
-	float vertex_data[16] = {
-	    100.0f,  100.0f, 0.0f, 0.0f,
-		200.0f,  100.0f, 1.0f, 0.0f,
-	    100.0f,  200.0f, 0.0f, 1.0f,
-		200.0f,  200.0f, 1.0f, 1.0f
 	};
 
 	vertex_array va;
@@ -74,7 +77,7 @@ int main() {
 	index_buffer ibo(index_data, 6);
 
 	glm::mat4 proj = glm::ortho(0.0f, 1280.0f, 0.0f, 720.0f, -1.0f, 1.0f);
-	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
+	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 
 	shader shader_program("res/shaders/basic_vertex.glsl", "res/shaders/basic_fragment.glsl");
 	shader_program.bind();
@@ -86,7 +89,8 @@ int main() {
 
 	float r = 0.0f;
 	float increment = 0.05f;
-	glm::vec3 translation(200, 200, 0);
+	glm::vec3 translationA(200, 200, 0);
+	glm::vec3 translationB(500, 500, 0);
 
 	va.unbind();
 	vb.unbind();
@@ -101,40 +105,63 @@ int main() {
 
 	ImGui::StyleColorsDark();
 
+	test::test_clear_color test;
+
 	while(!glfwWindowShouldClose(window))
 	{
-		ImGui_ImplGlfwGL3_NewFrame();
+
+		//renderer_.clear();
+
+		//if (r > 1.0f)
+		//	increment = -0.05f;
+		//else if (r < 0.0f)
+		//	increment = 0.05f;
+
+		//r += increment;	
+
+		//glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
+		//glm::mat4 mvp = proj * view * model;
+		//
+
+		//{
+		//	shader_program.bind();
+		//	shader_program.set_uniform_mat4f("u_MVP", mvp);
+		//	renderer_.draw(va, ibo, shader_program);
+		//}
+
+		//model = glm::translate(glm::mat4(1.0f), translationB);
+		//mvp = proj * view * model;
+
+		//{
+		//	shader_program.bind();
+		//	shader_program.set_uniform_mat4f("u_MVP", mvp);
+		//	renderer_.draw(va, ibo, shader_program);
+		//}
+		//
+
+		//{
+		//	ImGui::SliderFloat3("TranslationA", &translationA.x, 0.0f, 1280.0f);
+		//	ImGui::SliderFloat3("TranslationB", &translationB.x, 0.0f, 1280.0f);
+		//	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		//}
 
 		renderer_.clear();
-
-		if (r > 1.0f)
-			increment = -0.05f;
-		else if (r < 0.0f)
-			increment = 0.05f;
-
-		r += increment;	
-
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
-		glm::mat4 mvp = proj * view * model;
 		
-		shader_program.bind();
-		shader_program.set_uniform4f("u_Color", 0.7f, 0.0f, r, 1.0f);
-		shader_program.set_uniform_mat4f("u_MVP", mvp);
+		ImGui_ImplGlfwGL3_NewFrame();
+		
+		test.on_update(0.0f);
+		test.on_render();
 
-		renderer_.draw(va, ibo, shader_program);
-
-		{
-			ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 1280.0f);      
-			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		}
-
+		test.on_imgui_render();
+		
 		ImGui::Render();
 		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
-
+		
 		glfwSwapBuffers(window);
 
 		glfwPollEvents();
 	}
+
 	ImGui_ImplGlfwGL3_Shutdown();
 	ImGui::DestroyContext();
 	glfwTerminate();
