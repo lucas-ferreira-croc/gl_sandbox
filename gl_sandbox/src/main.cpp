@@ -16,6 +16,7 @@
 
 #include "tests/test.h"
 #include "tests/test_clear_color.h"
+#include "tests/test_texture2D.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -53,51 +54,6 @@ int main()
 
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
-	glBlendFunc(GL_SRC0_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	float vertex_data[16] = {
-	    -50.0f,  -50.0f, 0.0f, 0.0f,
-		 50.0f,  -50.0f, 1.0f, 0.0f,
-	    -50.0f,   50.0f, 0.0f, 1.0f,
-		 50.0f,   50.0f, 1.0f, 1.0f
-	};
-
-	unsigned int index_data[6] = {
-		0, 1, 2,
-		1, 2, 3
-	};
-
-	vertex_array va;
-	vertex_buffer vb(vertex_data, 4 * 4 * sizeof(float));
-
-	vertex_buffer_layout layout;
-	layout.push<float>(2);
-	layout.push<float>(2);
-	va.add_buffer(vb, layout);
-
-	index_buffer ibo(index_data, 6);
-
-	glm::mat4 proj = glm::ortho(0.0f, 1280.0f, 0.0f, 720.0f, -1.0f, 1.0f);
-	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
-
-	shader shader_program("res/shaders/basic_vertex.glsl", "res/shaders/basic_fragment.glsl");
-	shader_program.bind();
-	shader_program.set_uniform4f("u_Color", 0.7f, 0.0f, 0.7f, 1.0f);
-	
-	texture texture_("res/textures/crocao.png");
-	texture_.bind();
-	shader_program.set_uniform1i("u_Texture", 0);
-
-	float r = 0.0f;
-	float increment = 0.05f;
-	glm::vec3 translationA(200, 200, 0);
-	glm::vec3 translationB(500, 500, 0);
-
-	va.unbind();
-	vb.unbind();
-	ibo.unbind();
-	shader_program.unbind();
-
 	renderer renderer_;
 	
 	ImGui::CreateContext();
@@ -112,44 +68,10 @@ int main()
 	currentTest = menu;
 
 	menu->register_test<test::test_clear_color>("Clear color");
+	menu->register_test<test::test_texture2D>("Texture 2D");
 
 	while(!glfwWindowShouldClose(window))
 	{
-
-		//renderer_.clear();
-
-		//if (r > 1.0f)
-		//	increment = -0.05f;
-		//else if (r < 0.0f)
-		//	increment = 0.05f;
-
-		//r += increment;	
-
-		//glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
-		//glm::mat4 mvp = proj * view * model;
-		//
-
-		//{
-		//	shader_program.bind();
-		//	shader_program.set_uniform_mat4f("u_MVP", mvp);
-		//	renderer_.draw(va, ibo, shader_program);
-		//}
-
-		//model = glm::translate(glm::mat4(1.0f), translationB);
-		//mvp = proj * view * model;
-
-		//{
-		//	shader_program.bind();
-		//	shader_program.set_uniform_mat4f("u_MVP", mvp);
-		//	renderer_.draw(va, ibo, shader_program);
-		//}
-		//
-
-		//{
-		//	ImGui::SliderFloat3("TranslationA", &translationA.x, 0.0f, 1280.0f);
-		//	ImGui::SliderFloat3("TranslationB", &translationB.x, 0.0f, 1280.0f);
-		//	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		//}
 
 		renderer_.clear();
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -176,6 +98,7 @@ int main()
 
 		glfwPollEvents();
 	}
+
 	delete currentTest;
 	if (currentTest != menu)
 		delete menu;
